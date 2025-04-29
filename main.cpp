@@ -1,12 +1,12 @@
-#define WIN_32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
 #include <iostream>
 #include <Windows.h>
 #include <cstdint>
 #include <thread>
 #include "functions.h"
 
-DWORD baseAddress = (DWORD)GetModuleHandleA("ac_client.exe");
-
+// global vars
+uintptr_t baseAddress = (uintptr_t)GetModuleHandleA("ac_client.exe");
 CEnt* player = NULL;
 
 void CheatThread(HMODULE instance) noexcept
@@ -15,13 +15,16 @@ void CheatThread(HMODULE instance) noexcept
     FILE* f = nullptr;
     freopen_s(&f, "CONOUT$", "w", stdout);
 
+
+    uintptr_t* playerBasePtr = (uintptr_t*)(baseAddress + offset::playerBase);
+        return;
+
+    CEnt* player = (CEnt*)(*playerBasePtr);
+
     while (!GetAsyncKeyState(VK_F1))
     {
 
-        DWORD* playerBasePtr = (DWORD*)(baseAddress + offset::playerBase);
-        if (!playerBasePtr || !*playerBasePtr) continue;
-
-        CEnt* player = (CEnt*)(*playerBasePtr);
+        MsgBoxAddy((uintptr_t)playerBasePtr);
 
         player->clip = 99;
 
