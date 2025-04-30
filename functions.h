@@ -4,6 +4,14 @@ extern bool infAmmoEnabled;
 extern bool zeroDelayEnabled;
 extern uintptr_t baseAddress;
 
+bool CanUninject(bool ZeroDelayThread)
+{
+	if (ZeroDelayThread)
+		return false;
+	else
+		return true;
+}
+
 void MsgBoxAddy(uintptr_t addy)
 {
 	char szBuffer[1024];
@@ -23,35 +31,7 @@ void WaitForKeyRelease(int vkKey)
 	while (GetAsyncKeyState(vkKey)) Sleep(10);
 }
 
-void ToggleZeroDelay()
-{
-	zeroDelayEnabled = !zeroDelayEnabled;
-	WaitForKeyRelease(VK_F2);
-	system("cls");
-	showMenu(infAmmoEnabled, zeroDelayEnabled);
-}
 
-void MaintainZeroDelay()
-{
-	while (zeroDelayEnabled && !GetAsyncKeyState(VK_F2))
-	{
-		Sleep(5);
-		uintptr_t* playerBasePtr = (uintptr_t*)(baseAddress + offset::playerBase);
-		if (!playerBasePtr || !*playerBasePtr) continue;
-
-		CEnt* player = (CEnt*)(*playerBasePtr);
-
-		player->akimboDelay = 0;
-		player->arDelay = 0;
-		player->carbineDelay = 0;
-		player->knifeDelay = 0;
-		player->nadeDelay = 0;
-		player->pistolDelay = 0;
-		player->shotgunDelay = 0;
-		player->sniperDelay = 0;
-		player->subgunDelay = 0;
-	}
-}
 
 void ToggleInfAmmo()
 {
@@ -92,6 +72,38 @@ void MaintainInfAmmo()
 			player->sniperClip = 20;
 			player->subgunClip = 20;
 			WaitForKeyRelease(VK_F1);
+			system("cls");
+			showMenu(infAmmoEnabled, zeroDelayEnabled);
+			break;
+		}
+	}
+}
+
+void ToggleZeroDelay()
+{
+	zeroDelayEnabled = !zeroDelayEnabled;
+	WaitForKeyRelease(VK_F1);
+	system("cls");
+	showMenu(zeroDelayEnabled, infAmmoEnabled);
+}
+
+void MaintainZeroDelay()
+{
+	while (zeroDelayEnabled && !GetAsyncKeyState(VK_F2))
+	{
+		Sleep(5);
+		uintptr_t* playerBasePtr = (uintptr_t*)(baseAddress + offset::playerBase);
+		if (!playerBasePtr || !*playerBasePtr) continue;
+
+		CEnt* player = (CEnt*)(*playerBasePtr);
+
+		player->akimboDelay = 0;
+		player->arDelay = 0;
+
+		if (GetAsyncKeyState(VK_F2) & 0x8000)
+		{
+			WaitForKeyRelease(VK_F2);
+			zeroDelayEnabled = false;
 			system("cls");
 			showMenu(infAmmoEnabled, zeroDelayEnabled);
 			break;

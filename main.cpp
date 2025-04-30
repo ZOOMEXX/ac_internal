@@ -10,6 +10,7 @@ uintptr_t baseAddress = (uintptr_t)GetModuleHandleA("ac_client.exe");
 CEnt* player = NULL;
 bool infAmmoEnabled = false;
 bool zeroDelayEnabled = false;
+bool thread1Running = true;
 
 void CheatThread(HMODULE instance) noexcept
 {
@@ -29,6 +30,12 @@ void CheatThread(HMODULE instance) noexcept
 
     }
 
+    Sleep(100);
+    while (thread1Running)
+    {
+        std::cout << "Cannot uninject yet! Threads still running.\n";
+        Sleep(100);
+    }
     if (f) fclose(f);
     FreeConsole();
     FreeLibraryAndExitThread(instance, 0);
@@ -42,10 +49,11 @@ void ZeroDelayThread(HMODULE instance) noexcept
         if (GetAsyncKeyState(VK_F2) & 0x8000)
         {
             ToggleZeroDelay();
-            if (zeroDelayEnabled);
+            if (zeroDelayEnabled)
                 MaintainZeroDelay;
         }
     }
+    thread1Running = false;
 }
 
 int __stdcall DllMain(HMODULE instance, std::uintptr_t reason, const void* reserved)
