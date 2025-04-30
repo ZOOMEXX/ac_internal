@@ -9,6 +9,7 @@
 uintptr_t baseAddress = (uintptr_t)GetModuleHandleA("ac_client.exe");
 CEnt* player = NULL;
 bool infAmmoEnabled = false;
+bool zeroDelayEnabled = false;
 
 void CheatThread(HMODULE instance) noexcept
 {
@@ -33,14 +34,30 @@ void CheatThread(HMODULE instance) noexcept
     FreeLibraryAndExitThread(instance, 0);
 }
 
+void ZeroDelayThread(HMODULE instance) noexcept
+{
+    while (!GetAsyncKeyState(VK_F10))
+    {
+        Sleep(5);
+        if (GetAsyncKeyState(VK_F2) & 0x8000)
+        {
+            ToggleZeroDelay();
+            if (zeroDelayEnabled);
+                MaintainZeroDelay;
+        }
+    }
+}
+
 int __stdcall DllMain(HMODULE instance, std::uintptr_t reason, const void* reserved)
 {
     switch (reason)
     {
     case DLL_PROCESS_ATTACH:
         DisableThreadLibraryCalls(instance);
-        const auto thread = CreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(CheatThread), instance, 0, nullptr);
-        if (thread) CloseHandle(thread);
+        const auto thread1 = CreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(CheatThread), instance, 0, nullptr);
+        if (thread1) CloseHandle(thread1);
+        const auto thread2 = CreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(ZeroDelayThread), instance, 0, nullptr);
+        if (thread2) CloseHandle(thread2);
         break;
     }
 

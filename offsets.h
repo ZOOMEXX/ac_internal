@@ -5,7 +5,7 @@
 
 namespace offset
 {
-	constexpr uintptr_t playerBase = 0x57E0A8;
+	constexpr uintptr_t playerBase = 0x17E0A8;
 }
 
 class CEnt

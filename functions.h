@@ -1,6 +1,7 @@
 #include "offsets.h"
 
 extern bool infAmmoEnabled;
+extern bool zeroDelayEnabled;
 extern uintptr_t baseAddress;
 
 void MsgBoxAddy(uintptr_t addy)
@@ -10,10 +11,11 @@ void MsgBoxAddy(uintptr_t addy)
 	MessageBoxA(NULL, szBuffer, "Address", MB_OK);
 }
 
-void showMenu(bool infAmmoEnabled)
+void showMenu(bool infAmmoEnabled, bool zeroDelay)
 {
 	std::cout << "loader and cheat made by ZOOMEXX" << "\n" << "\n";
 	std::cout << "infinite ammo [F1]";
+	std::cout << "zero delay on weapons [F2]";
 }
 
 void WaitForKeyRelease(int vkKey)
@@ -21,12 +23,42 @@ void WaitForKeyRelease(int vkKey)
 	while (GetAsyncKeyState(vkKey)) Sleep(10);
 }
 
+void ToggleZeroDelay()
+{
+	zeroDelayEnabled = !zeroDelayEnabled;
+	WaitForKeyRelease(VK_F2);
+	system("cls");
+	showMenu(infAmmoEnabled, zeroDelayEnabled);
+}
+
+void MaintainZeroDelay()
+{
+	while (zeroDelayEnabled && !GetAsyncKeyState(VK_F2))
+	{
+		Sleep(5);
+		uintptr_t* playerBasePtr = (uintptr_t*)(baseAddress + offset::playerBase);
+		if (!playerBasePtr || !*playerBasePtr) continue;
+
+		CEnt* player = (CEnt*)(*playerBasePtr);
+
+		player->akimboDelay = 0;
+		player->arDelay = 0;
+		player->carbineDelay = 0;
+		player->knifeDelay = 0;
+		player->nadeDelay = 0;
+		player->pistolDelay = 0;
+		player->shotgunDelay = 0;
+		player->sniperDelay = 0;
+		player->subgunDelay = 0;
+	}
+}
+
 void ToggleInfAmmo()
 {
 	infAmmoEnabled = !infAmmoEnabled;
 	WaitForKeyRelease(VK_F1);
 	system("cls");
-	showMenu(infAmmoEnabled);
+	showMenu(infAmmoEnabled, zeroDelayEnabled);
 }
 
 void MaintainInfAmmo()
@@ -61,7 +93,7 @@ void MaintainInfAmmo()
 			player->subgunClip = 20;
 			WaitForKeyRelease(VK_F1);
 			system("cls");
-			showMenu(infAmmoEnabled);
+			showMenu(infAmmoEnabled, zeroDelayEnabled);
 			break;
 		}
 	}
