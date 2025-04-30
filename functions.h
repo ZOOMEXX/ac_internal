@@ -3,6 +3,13 @@
 extern bool infAmmoEnabled;
 extern uintptr_t baseAddress;
 
+void MsgBoxAddy(uintptr_t addy)
+{
+	char szBuffer[1024];
+	sprintf_s(szBuffer, "Address: %08X", addy);
+	MessageBoxA(NULL, szBuffer, "Address", MB_OK);
+}
+
 void showMenu(bool infAmmoEnabled)
 {
 	std::cout << "loader and cheat made by ZOOMEXX" << "\n" << "\n";
@@ -41,7 +48,7 @@ void MaintainInfAmmo()
 		player->sniperClip = 99;
 		player->subgunClip = 99;
 		
-		if (GetAsyncKeyState(VK_F1) & 8000)
+		if (GetAsyncKeyState(VK_F1) & 0x8000)
 		{
 			infAmmoEnabled = false;
 			player->akimboClip = 20;
