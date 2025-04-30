@@ -50,7 +50,7 @@ void ZeroDelayThread(HMODULE instance) noexcept
         {
             ToggleZeroDelay();
             if (zeroDelayEnabled)
-                MaintainZeroDelay;
+                MaintainZeroDelay();
         }
     }
     thread1Running = false;

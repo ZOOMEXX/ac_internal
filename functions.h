@@ -82,9 +82,9 @@ void MaintainInfAmmo()
 void ToggleZeroDelay()
 {
 	zeroDelayEnabled = !zeroDelayEnabled;
-	WaitForKeyRelease(VK_F1);
+	WaitForKeyRelease(VK_F2);
 	system("cls");
-	showMenu(zeroDelayEnabled, infAmmoEnabled);
+	showMenu(infAmmoEnabled, zeroDelayEnabled);
 }
 
 void MaintainZeroDelay()
@@ -99,6 +99,13 @@ void MaintainZeroDelay()
 
 		player->akimboDelay = 0;
 		player->arDelay = 0;
+		player->carbineDelay = 0;
+		player->knifeDelay = 0;
+		player->nadeDelay = 0;
+		player->pistolDelay = 0;
+		player->shotgunDelay = 0;
+		player->sniperDelay = 0;
+		player->subgunDelay = 0;
 
 		if (GetAsyncKeyState(VK_F2) & 0x8000)
 		{
