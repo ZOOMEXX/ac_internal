@@ -8,6 +8,8 @@
 // global vars
 uintptr_t baseAddress = (uintptr_t)GetModuleHandleA("ac_client.exe");
 CEnt* player = NULL;
+bool infAmmoEnabled = false;
+extern uintptr_t baseAddress;
 
 void CheatThread(HMODULE instance) noexcept
 {
@@ -15,20 +17,16 @@ void CheatThread(HMODULE instance) noexcept
     FILE* f = nullptr;
     freopen_s(&f, "CONOUT$", "w", stdout);
 
-
-    uintptr_t* playerBasePtr = (uintptr_t*)(baseAddress + offset::playerBase);
-        return;
-
-    CEnt* player = (CEnt*)(*playerBasePtr);
-
-    while (!GetAsyncKeyState(VK_F1))
+    while (!GetAsyncKeyState(VK_F10))
     {
-
-        MsgBoxAddy((uintptr_t)playerBasePtr);
-
-        player->clip = 99;
-
         Sleep(5);
+        if (GetAsyncKeyState(VK_F1) & 8000)
+        {
+            ToggleInfAmmo();
+            if (infAmmoEnabled)
+                MaintainInfAmmo();
+        }
+
     }
 
     if (f) fclose(f);
